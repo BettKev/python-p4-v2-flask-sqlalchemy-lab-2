@@ -13,12 +13,18 @@ db = SQLAlchemy(metadata=metadata)
 
 class Customer(db.Model):
     __tablename__ = 'customers'
+    
+    #Serialization rules
+    serialize_rules = ('-reviews.customer',)
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
     # Relationship
     reviews = db.relationship('Review', back_populates='customer')
+
+    #Association Proxy
+    items = association_proxy('reviews', 'item')
 
     def __repr__(self):
         return f'<Customer {self.id}, {self.name}>'
@@ -27,6 +33,9 @@ class Customer(db.Model):
 
 class Item(db.Model):
     __tablename__ = 'items'
+
+    # Serialization rules
+    serialize_rules = ('-reviews.item',)
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -42,10 +51,13 @@ class Item(db.Model):
 class Review(db.Model):
     __tablename__ = "reviews"
 
+    # Serialization rules
+    serialize_rules = ('-customer.reviews', '-item.reviews')
+
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.String)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
-    item_id = db.Column(db.Integer, db.ForeignKey('items.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True)
+    item_id = db.Column(db.Integer, db.ForeignKey('items.id'), nullable=True)
 
     # Relationships
     customer = db.relationship('Customer', back_populates='reviews')
