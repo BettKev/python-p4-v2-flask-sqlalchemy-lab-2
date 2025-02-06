@@ -11,7 +11,7 @@ metadata = MetaData(naming_convention={
 db = SQLAlchemy(metadata=metadata)
 
 
-class Customer(db.Model):
+class Customer(db.Model, SerializerMixin):
     __tablename__ = 'customers'
     
     #Serialization rules
@@ -31,7 +31,7 @@ class Customer(db.Model):
 
 
 
-class Item(db.Model):
+class Item(db.Model, SerializerMixin):
     __tablename__ = 'items'
 
     # Serialization rules
@@ -48,7 +48,7 @@ class Item(db.Model):
         return f'<Item {self.id}, {self.name}, {self.price}>'
 
 
-class Review(db.Model):
+class Review(db.Model, SerializerMixin):
     __tablename__ = "reviews"
 
     # Serialization rules
